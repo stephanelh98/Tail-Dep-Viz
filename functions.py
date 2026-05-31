@@ -4,37 +4,6 @@ from scipy.stats import rankdata
 import itertools
 import matplotlib.pyplot as plt
 
-# --- Loading the data --- #
-
-def load_data(path=None, sep=",", header=0, index_col=0, nrows=None, na_values=None):
-    if not path.endswith(".csv"):
-        raise ValueError(f"File should be in CSV format, got : {path}")
-        
-    if nrows is None and na_values is None:
-        return pd.read_csv(filepath_or_buffer=path,
-                    sep=sep,
-                    header=header,
-                    index_col=index_col)
-    if nrows is not None and na_values is None:
-        return pd.read_csv(filepath_or_buffer=path,
-                    sep=sep,
-                    header=header,
-                    index_col=index_col,
-                    nrows=nrows)
-    if nrows is None and na_values is not None:
-        return pd.read_csv(filepath_or_buffer=path,
-                    sep=sep,
-                    header=header,
-                    index_col=index_col,
-                    na_values=na_values)
-    if nrows is not None and na_values is not None:
-        return pd.read_csv(filepath_or_buffer=path,
-                    sep=sep,
-                    header=header,
-                    index_col=index_col,
-                    nrows=nrows,
-                    na_values=na_values)
-
 # --- Compute the TPDM between columns --- #
 
 def get_TPDM(data=None, estimator='pairwise',p_upper=None):
@@ -47,6 +16,8 @@ def get_TPDM(data=None, estimator='pairwise',p_upper=None):
         p_upper=0.05
     
     n_upper = int(p_upper * data.shape[0])
+    if n_upper<10:
+        raise ValueError("Your data does not contain enough points above the threshold.")
     
     # select numeric columns
     data_num = data.select_dtypes('number')
